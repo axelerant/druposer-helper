@@ -1,0 +1,14 @@
+{
+    "name": "hussainweb/druposer-helper",
+    "keywords": ["database", "schema"],
+    "require": {
+        "php": ">=5.5.9",
+        "symfony/console": "^3.0",
+        "symfony/yaml": "~3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "DruposerHelper\\": "src/"
+        }
+    }
+}
