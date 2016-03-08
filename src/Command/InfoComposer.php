@@ -87,8 +87,12 @@ class InfoComposer extends Command
             ];
             foreach ($dependencies as $dependency) {
                 if (empty($projects) || isset($projects[$dependency])) {
-                    $version = isset($projects[$dependency]) ? $projects[$dependency]['version'] : "*";
-                    $version = str_replace("-dev", "@dev", $version);
+                    $version = "*";
+                    if (isset($projects[$dependency])) {
+                        $version = $projects[$dependency]['version'];
+                        $version = str_replace("-dev", "@dev", $version);
+                        $version = str_replace(".x", ".0", $version);
+                    }
                     $composer['require']['drupal/' . $dependency] = sprintf("~%s.%s", $core, $version);
                 }
             }
