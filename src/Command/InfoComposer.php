@@ -93,12 +93,16 @@ class InfoComposer extends Command
             foreach ($dependencies as $dependency) {
                 if (empty($projects) || isset($projects[$dependency])) {
                     $version = "*";
+                    $version_constraint_prefix = "~";
                     if (isset($projects[$dependency])) {
                         $version = $projects[$dependency]['version'];
-                        $version = str_replace("-dev", "@dev", $version);
-                        $version = str_replace(".x", ".0", $version);
+                        $count = 0;
+                        $version = str_replace(".x", ".*", $version, $count);
+                        if ($count) {
+                            $version_constraint_prefix = "";
+                        }
                     }
-                    $composer['require']['drupal/' . $dependency] = sprintf("~%s.%s", $core, $version);
+                    $composer['require']['drupal/' . $dependency] = sprintf("%s%s.%s", $version_constraint_prefix, $core, $version);
 
                     if (isset($patches[$dependency])) {
                         $i = 0;
