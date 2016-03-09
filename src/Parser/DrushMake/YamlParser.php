@@ -39,6 +39,13 @@ class YamlParser implements ParserInterface
 
     public function getPatches()
     {
-        // TODO: Implement getPatches() method.
+        $patches = [];
+        foreach ($this->getProjects() as $name => $project) {
+            if (!empty($project['patch'])) {
+                $patches[$name] = $project['patch'];
+            }
+        }
+
+        return $patches;
     }
 }

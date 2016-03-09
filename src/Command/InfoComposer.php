@@ -76,14 +76,19 @@ class InfoComposer extends Command
             $dependencies = $infoparser->get('dependencies');
 
             $projects = [];
+            $patches = [];
             if ($makefilename) {
                 $parser = new Parser();
                 $parser = $parser->getParser($makefilename);
                 $projects = $parser->getProjects();
+                $patches = $parser->getPatches();
             }
 
             $composer = [
                 'require' => [],
+                'extra' => [
+                    'patches' => [],
+                ],
             ];
             foreach ($dependencies as $dependency) {
                 if (empty($projects) || isset($projects[$dependency])) {
@@ -94,6 +99,14 @@ class InfoComposer extends Command
                         $version = str_replace(".x", ".0", $version);
                     }
                     $composer['require']['drupal/' . $dependency] = sprintf("~%s.%s", $core, $version);
+
+                    if (isset($patches[$dependency])) {
+                        $i = 0;
+                        foreach ($patches[$dependency] as $patch) {
+                            $key = "Patch " . ++$i;
+                            $composer['extra']['patches']['drupal/' . $dependency][$key] = $patch;
+                        }
+                    }
                 }
             }
 
