@@ -44,7 +44,14 @@ class InfoComposer extends Command
               'core',
               'c',
               InputOption::VALUE_OPTIONAL,
-              "Drupal core version"
+              "Drupal core version",
+              '7'
+            )
+            ->addOption(
+              'fix-patched-versions',
+              null,
+              InputOption::VALUE_NONE,
+              "Fix versions for modules which are patched"
             );
     }
 
@@ -58,9 +65,8 @@ class InfoComposer extends Command
         $infofilename = $input->getArgument('infofile');
         $makefilename = $input->getOption('make');
         $core = $input->getOption('core');
-        if (!$core) {
-            $core = '7';
-        }
+
+        $fix_patched_versions = $input->getOption('fix-patched-versions');
 
         $file = $input->getOption('out');
         if ($file) {
@@ -102,15 +108,19 @@ class InfoComposer extends Command
                             $version_constraint_prefix = "";
                         }
                     }
-                    $composer['require']['drupal/' . $dependency] = sprintf("%s%s.%s", $version_constraint_prefix, $core, $version);
 
                     if (isset($patches[$dependency])) {
+                        if ($fix_patched_versions) {
+                            $version_constraint_prefix = "";
+                        }
                         $i = 0;
                         foreach ($patches[$dependency] as $patch) {
                             $key = "Patch " . ++$i;
                             $composer['extra']['patches']['drupal/' . $dependency][$key] = $patch;
                         }
                     }
+
+                    $composer['require']['drupal/' . $dependency] = sprintf("%s%s.%s", $version_constraint_prefix, $core, $version);
                 }
             }
 
